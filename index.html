@@ -1,1 +1,115 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- SBA 5 - Interactive Personal Blog Platform (by-TN) -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
+    <title>My Personal Blog for this SBA (by-TN)</title>
+
+    <!-- Link to CSS file -->
+    <link rel="stylesheet" href="styles.css" />
+    <script src="script.js" defer></script>
+  </head>
+  <body>
+    <!-- Notes to self:
+         This whole page is my blog app. I have two main sections: 1) The form to create or edit a post. 2) The area that shows all posts.
+    -->
+
+    <header class="app-header">
+      <div class="header-inner">
+        <h1>My Personal Blog for this SBA (by-TN)</h1>
+        <p class="header-subtitle">
+          Create, edit, and delete your posts. Everything is saved in your browser.
+        </p>
+      </div>
+    </header>
+
+    <main class="page-layout">
+      <!-- Form Section -->
+      <section class="form-section">
+        <div class="form-card">
+          <h2>Create or Edit a Post</h2>
+
+          <!-- Notes to self: novalidate = turn off default browser bubble so I can use my own custom messages.
+          -->
+          <form id="postForm" novalidate>
+            <!-- Title field -->
+            <div class="field-group">
+              <label for="postTitle" class="field-label">Post Title</label>
+
+              <!-- Title input -->
+              <div class="field-control">
+                <input
+                  id="postTitle"
+                  type="text"
+                  class="text-input"
+                  placeholder="Type your post title"
+                />
+              </div>
+
+              <!-- Error message area for title (no span id, just a div) -->
+              <div class="error-message" data-error-for="title"></div>
+            </div>
+
+            <!-- Content field -->
+            <div class="field-group">
+              <label for="postContent" class="field-label">Post Content</label>
+
+              <!-- Content textarea -->
+              <div class="field-control">
+                <textarea
+                  id="postContent"
+                  class="text-area"
+                  rows="6"
+                  placeholder="Type your post content here"
+                ></textarea>
+              </div>
+
+              <!-- Error message area for content -->
+              <div class="error-message" data-error-for="content"></div>
+            </div>
+
+            <!-- Buttons for save and cancel edit -->
+            <div class="button-row">
+              <!-- This button will either create a new post or save an edited post -->
+              <button type="submit" class="primary-button" id="savePostButton">
+                Save Post
+              </button>
+
+              <!-- This button only shows when editing a post -->
+              <button
+                type="button"
+                class="secondary-button hidden"
+                id="cancelEditButton"
+              >
+                Cancel Edit
+              </button>
+            </div>
+
+            <!-- Help text to show what mode we are in (creating or editing) -->
+            <div class="helper-text" id="formHelper">
+              You are creating a new post.
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- Posts Section -->
+      <section class="posts-section">
+        <div class="posts-card">
+          <h2>Your Posts</h2>
+
+          <!-- Message when there are no posts -->
+          <div class="no-posts-message" id="noPostsMessage">
+            Girl, you do not have any posts yet. Use the form on the left to add one.
+          </div>
+
+          <!-- Container where posts will be inserted with JavaScript -->
+          <div class="posts-list" id="postsContainer"></div>
+        </div>
+      </section>
+    </main>
+
+  </body>
+</html>
