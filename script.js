@@ -64,3 +64,56 @@ console.log("Error message elements:", {
   titleErrorDiv,
   contentErrorDiv,
 });
+
+// =======================
+// Step 3: Utility functions
+// =======================
+
+// Notes to self:
+// This function creates a simple unique id using the current time and a random number.
+// I will use it when creating a new post.
+const generateId = () => {
+  const idValue = Date.now().toString() + "-" + Math.floor(Math.random() * 100000).toString();
+  console.log("Generated id:", idValue);
+  return idValue;
+};
+// Note to self: commit after adding generateId function and console.log
+
+
+// Notes to self:
+// This function saves the posts array into localStorage as a JSON string.
+const savePostsToStorage = () => {
+  const json = JSON.stringify(posts);
+  localStorage.setItem(STORAGE_KEY, json);
+  console.log("Posts saved to localStorage:", json);
+};
+// Note to self: commit after adding savePostsToStorage function and console.log
+
+
+// Notes to self:
+// This function loads posts from localStorage when the app starts.
+const loadPostsFromStorage = () => {
+  const stored = localStorage.getItem(STORAGE_KEY);
+  console.log("Raw data from localStorage:", stored);
+
+  try {
+    const parsed = JSON.parse(stored);
+    // Make sure we got an array
+    if (Array.isArray(parsed)) {
+      posts = parsed;
+      console.log("Posts loaded from localStorage:", posts);
+    } else {
+      console.log("Stored data was not an array. Resetting posts to empty array.");
+      posts = [];
+    }
+
+     if (!stored) {
+    console.log("No posts found in localStorage.");
+    posts = [];
+    return;
+  }
+  } catch (error) {
+    console.log("Error parsing localStorage JSON. Resetting posts array.", error);
+    posts = [];
+  }
+};
