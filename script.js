@@ -200,3 +200,160 @@ const renderPosts = () => {
 
   console.log("Finished rendering posts.");
 };
+
+// =======================
+// Step 7: Handle form submit (create or update)
+// =======================
+
+// Notes to self:
+// This function runs when the form submit event happens.
+// It decides whether to create a new post or update an existing one.
+const handleFormSubmit = (event) => {
+  // Prevent page reload
+  event.preventDefault();
+
+  console.log("Form submitted.");
+
+  // Check that fields are filled
+  const formIsValid = validateForm();
+  if (!formIsValid) {
+    console.log("Form is not valid. Not saving.");
+    return;
+  }
+
+  const titleValue = postTitleInput.value.trim();
+  const contentValue = postContentInput.value.trim();
+
+  // If currentEditPostId is null, create a new post
+  if (!currentEditPostId) {
+    const newPost = {
+      id: generateId(),
+      title: titleValue,
+      content: contentValue,
+      createdAt: new Date().toLocaleString(),
+    };
+
+    posts.push(newPost);
+    console.log("New post added:", newPost);
+    formHelper.textContent = "New post created successfully.";
+
+  } else {
+    // We are editing an existing post
+    console.log("Editing existing post with id:", currentEditPostId);
+
+    const index = posts.findIndex((post) => post.id === currentEditPostId);
+
+    if (index !== -1) {
+      posts[index].title = titleValue;
+      posts[index].content = contentValue;
+      console.log("Post updated:", posts[index]);
+      formHelper.textContent = "Post updated successfully.";
+    } else {
+      console.log("Could not find post to edit. No changes made.");
+    }
+  }
+
+  // Save to localStorage and re-render
+  savePostsToStorage();
+  renderPosts();
+
+  // Reset form back to create mode
+  resetFormToCreateMode();
+};
+
+
+// =======================
+// Step 8: Handle click on posts (edit and delete)
+// =======================
+
+// Notes to self:
+// This function listens for clicks on the posts container.
+// It uses event delegation to handle Edit and Delete buttons.
+const handlePostsContainerClick = (event) => {
+  const clickedElement = event.target;
+
+  // Only care about elements that have a data-action attribute
+  const action = clickedElement.dataset.action;
+  const postId = clickedElement.dataset.postId;
+
+  if (!action || !postId) {
+    // Clicked on something that is not an action button
+    return;
+  }
+
+  console.log("Posts container click:", { action, postId });
+
+  if (action === "delete") {
+    // Delete the post
+    const confirmed = window.confirm("Are you sure you want to delete this post?");
+    if (!confirmed) {
+      console.log("Delete cancelled by user.");
+      return;
+    }
+
+    posts = posts.filter((post) => post.id !== postId);
+    console.log("Post deleted. Remaining posts:", posts);
+
+    savePostsToStorage();
+    renderPosts();
+  }
+
+  if (action === "edit") {
+    // Edit the post (fill the form with its data)
+    const postToEdit = posts.find((post) => post.id === postId);
+
+    if (!postToEdit) {
+      console.log("Could not find post to edit with id:", postId);
+      return;
+    }
+
+    currentEditPostId = postId;
+    postTitleInput.value = postToEdit.title;
+    postContentInput.value = postToEdit.content;
+
+    clearValidation();
+
+    formHelper.textContent = "You are editing an existing post.";
+    savePostButton.textContent = "Save Changes";
+    cancelEditButton.classList.remove("hidden");
+
+    console.log("Editing post:", postToEdit);
+  }
+};
+
+
+// =======================
+// Step 9: Cancel edit button handler
+// =======================
+
+// Notes to self:
+// When I click cancel, I stop editing and go back to creating a new post.
+const handleCancelEditClick = () => {
+  resetFormToCreateMode();
+  console.log("Cancel edit clicked. Back to create mode.");
+};
+
+
+// =======================
+// Step 10: Wire up event listeners and initialize app
+// =======================
+
+const initializeApp = () => {
+  console.log("Initializing app...");
+
+  // Load posts from localStorage into the posts array
+  loadPostsFromStorage();
+
+  // Render any posts we loaded
+  renderPosts();
+
+  // Attach event listeners
+  postForm.addEventListener("submit", handleFormSubmit);
+  postsContainer.addEventListener("click", handlePostsContainerClick);
+  cancelEditButton.addEventListener("click", handleCancelEditClick);
+
+  // Start with form in create mode
+  resetFormToCreateMode();
+
+  console.log("App initialized.");
+};
